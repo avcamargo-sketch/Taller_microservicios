@@ -1,26 +1,18 @@
 ### API Gestor de Historias de Usuario
-### Base URL: http://localhost:8000
-
-### ==========================================
-### RUTA DE PRUEBA
-### ==========================================
-GET http://localhost:8000/
-Accept: application/json
+### Base URL: http://127.0.0.1:8000
 
 ### ==========================================
 ### SPRINTS
 ### ==========================================
 
-### Listar todos los sprints
-GET http://localhost:8000/api/sprints
-Accept: application/json
+### Listar sprints
+GET http://127.0.0.1:8000/api/sprints
 
-### Ver un sprint específico
-GET http://localhost:8000/api/sprints/1
-Accept: application/json
+### Ver sprint
+GET http://127.0.0.1:8000/api/sprints/1
 
-### Crear un sprint
-POST http://localhost:8000/api/sprints
+### Crear sprint
+POST http://127.0.0.1:8000/api/sprints
 Content-Type: application/json
 
 {
@@ -29,8 +21,8 @@ Content-Type: application/json
     "fecha_fin": "2026-05-15"
 }
 
-### Editar un sprint
-PUT http://localhost:8000/api/sprints/1
+### Editar sprint
+PUT http://127.0.0.1:8000/api/sprints/1
 Content-Type: application/json
 
 {
@@ -39,29 +31,23 @@ Content-Type: application/json
     "fecha_fin": "2026-05-20"
 }
 
-### Eliminar un sprint
-DELETE http://localhost:8000/api/sprints/1
-Accept: application/json
+### Eliminar sprint
+DELETE http://127.0.0.1:8000/api/sprints/1
 
 ### ==========================================
-### HISTORIAS DE USUARIO
+### HISTORIAS
 ### ==========================================
 
-### Listar todas las historias
-GET http://localhost:8000/api/historias
-Accept: application/json
+### Listar historias
+GET http://127.0.0.1:8000/api/historias
 
-### Ver una historia específica
-GET http://localhost:8000/api/historias/1
-Accept: application/json
-
-### Crear una historia
-POST http://localhost:8000/api/historias
+### Crear historia
+POST http://127.0.0.1:8000/api/historias
 Content-Type: application/json
 
 {
-    "titulo": "Como usuario quiero iniciar sesión",
-    "descripcion": "Implementar sistema de login con usuario y contraseña",
+    "titulo": "Como usuario quiero login",
+    "descripcion": "Sistema de autenticación",
     "responsable": "Juan Pérez",
     "estado": "nueva",
     "puntos": 5,
@@ -69,32 +55,28 @@ Content-Type: application/json
     "sprint_id": 1
 }
 
-### Editar una historia
-PUT http://localhost:8000/api/historias/1
+### Editar historia
+PUT http://127.0.0.1:8000/api/historias/1
 Content-Type: application/json
 
 {
-    "titulo": "Como usuario quiero iniciar sesión con Google",
+    "titulo": "Como usuario quiero login con Google",
     "estado": "activa",
     "puntos": 8
 }
 
-### Eliminar una historia
-DELETE http://localhost:8000/api/historias/1
-Accept: application/json
+### Eliminar historia
+DELETE http://127.0.0.1:8000/api/historias/1
 
-### Listar historias de un sprint
-GET http://localhost:8000/api/sprints/1/historias
-Accept: application/json
+### Historias por sprint
+GET http://127.0.0.1:8000/api/sprints/1/historias
 
 ### ==========================================
 ### INFORMES
 ### ==========================================
 
-### Resumen por sprint
-GET http://localhost:8000/api/informes/sprints
-Accept: application/json
+### Informe por sprint
+GET http://127.0.0.1:8000/api/informes/sprints
 
-### Resumen por responsable
-GET http://localhost:8000/api/informes/responsables
-Accept: application/json
+### Informe por responsable
+GET http://127.0.0.1:8000/api/informes/responsables

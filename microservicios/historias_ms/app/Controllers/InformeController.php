@@ -2,27 +2,18 @@
 
 namespace App\Controllers;
 
-use App\Presentation\Repositories\HistoriaRepository;
 use App\Models\Sprint;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use App\Models\Historia;
 
 class InformeController
 {
-    private $historiaRepo;
-
-    public function __construct()
-    {
-        $this->historiaRepo = new HistoriaRepository();
-    }
-
-    public function porSprint(Request $request, Response $response)
+    function getInformePorSprint()
     {
         $sprints = Sprint::all();
         $informe = [];
         
         foreach ($sprints as $sprint) {
-            $historias = $this->historiaRepo->porSprint($sprint->id);
+            $historias = Historia::where('sprint_id', $sprint->id)->get();
             $total = $historias->count();
             $finalizadas = $historias->where('estado', 'finalizada')->count();
             $pendientes = $historias->whereIn('estado', ['nueva', 'activa'])->count();
@@ -39,18 +30,16 @@ class InformeController
                 'puntos_totales' => $puntosTotales
             ];
         }
-        
-        $response->getBody()->write(json_encode($informe));
-        return $response->withHeader('Content-Type', 'application/json');
+        return $informe;
     }
 
-    public function porResponsable(Request $request, Response $response)
+    function getInformePorResponsable()
     {
-        $responsables = $this->historiaRepo->responsablesUnicos();
+        $responsables = Historia::select('responsable')->distinct()->get();
         $informe = [];
         
         foreach ($responsables as $r) {
-            $historias = $this->historiaRepo->porResponsable($r->responsable);
+            $historias = Historia::where('responsable', $r->responsable)->get();
             $total = $historias->count();
             $finalizadas = $historias->where('estado', 'finalizada')->count();
             $pendientes = $historias->whereIn('estado', ['nueva', 'activa'])->count();
@@ -66,8 +55,6 @@ class InformeController
                 'puntos_totales' => $puntosTotales
             ];
         }
-        
-        $response->getBody()->write(json_encode($informe));
-        return $response->withHeader('Content-Type', 'application/json');
+        return $informe;
     }
 }

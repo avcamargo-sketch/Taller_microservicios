@@ -2,84 +2,78 @@
 
 namespace App\Controllers;
 
-use App\Presentation\Repositories\HistoriaRepository;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use App\Models\Historia;
+use Exception;
 
 class HistoriaController
 {
-    private $repository;
-
-    public function __construct()
+    function getHistorias()
     {
-        $this->repository = new HistoriaRepository();
+        return Historia::all();
     }
 
-    public function index(Request $request, Response $response)
+    function guardarHistoria($data)
     {
-        $historias = $this->repository->all();
-        $response->getBody()->write(json_encode($historias));
-        return $response->withHeader('Content-Type', 'application/json');
-    }
-
-    public function show(Request $request, Response $response, $args)
-    {
-        $historia = $this->repository->find($args['id']);
-        if (!$historia) {
-            $response->getBody()->write(json_encode(['error' => 'Historia no encontrada']));
-            return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
-        }
-        $response->getBody()->write(json_encode($historia));
-        return $response->withHeader('Content-Type', 'application/json');
-    }
-
-    public function store(Request $request, Response $response)
-    {
-        $data = $request->getParsedBody();
-        
         if (empty($data['titulo']) || empty($data['descripcion']) || 
             empty($data['responsable']) || empty($data['puntos']) || 
             empty($data['sprint_id']) || empty($data['fecha_creacion'])) {
-            $response->getBody()->write(json_encode(['error' => 'Faltan campos obligatorios']));
-            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+            throw new Exception("Faltan campos obligatorios", 1);
         }
-        
-        $historia = $this->repository->create($data);
-        $response->getBody()->write(json_encode($historia));
-        return $response->withStatus(201)->withHeader('Content-Type', 'application/json');
+        $historia = new Historia();
+        $historia->titulo = $data['titulo'];
+        $historia->descripcion = $data['descripcion'];
+        $historia->responsable = $data['responsable'];
+        $historia->estado = $data['estado'] ?? 'nueva';
+        $historia->puntos = $data['puntos'];
+        $historia->fecha_creacion = $data['fecha_creacion'];
+        $historia->fecha_finalizacion = empty($data['fecha_finalizacion']) ? null : $data['fecha_finalizacion'];
+        $historia->sprint_id = $data['sprint_id'];
+        $historia->save();
+        return $historia;
     }
 
-    public function update(Request $request, Response $response, $args)
+    function getHistoria($id)
     {
-        $data = $request->getParsedBody();
-        $historia = $this->repository->update($args['id'], $data);
-        
-        if (!$historia) {
-            $response->getBody()->write(json_encode(['error' => 'Historia no encontrada']));
-            return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+        $historia = Historia::find($id);
+        if (empty($historia)) {
+            throw new Exception("Historia $id no existe", 2);
         }
-        
-        $response->getBody()->write(json_encode($historia));
-        return $response->withHeader('Content-Type', 'application/json');
+        return $historia;
     }
 
-    public function destroy(Request $request, Response $response, $args)
+    function modificarHistoria($id, $data)
     {
-        $eliminado = $this->repository->delete($args['id']);
-        
-        if (!$eliminado) {
-            $response->getBody()->write(json_encode(['error' => 'Historia no encontrada']));
-            return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
-        }
-        
-        $response->getBody()->write(json_encode(['mensaje' => 'Historia eliminada correctamente']));
-        return $response->withHeader('Content-Type', 'application/json');
+        $historia = $this->getHistoria($id);
+        if (isset($data['titulo'])) $historia->titulo = $data['titulo'];
+        if (isset($data['descripcion'])) $historia->descripcion = $data['descripcion'];
+        if (isset($data['responsable'])) $historia->responsable = $data['responsable'];
+        if (isset($data['estado'])) $historia->estado = $data['estado'];
+        if (isset($data['puntos'])) $historia->puntos = $data['puntos'];
+        if (isset($data['fecha_finalizacion'])) $historia->fecha_finalizacion = $data['fecha_finalizacion'];
+        if (isset($data['sprint_id'])) $historia->sprint_id = $data['sprint_id'];
+        $historia->save();
+        return $historia;
     }
 
-    public function porSprint(Request $request, Response $response, $args)
+    function borrarHistoria($id)
     {
-        $historias = $this->repository->porSprint($args['id']);
-        $response->getBody()->write(json_encode($historias));
-        return $response->withHeader('Content-Type', 'application/json');
+        $historia = $this->getHistoria($id);
+        $historia->delete();
+        return true;
+    }
+
+    function getHistoriasPorSprint($sprintId)
+    {
+        return Historia::where('sprint_id', $sprintId)->get();
+    }
+
+    function getResponsablesUnicos()
+    {
+        return Historia::select('responsable')->distinct()->get();
+    }
+
+    function getHistoriasPorResponsable($responsable)
+    {
+        return Historia::where('responsable', $responsable)->get();
     }
 }

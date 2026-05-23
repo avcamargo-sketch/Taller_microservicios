@@ -1,46 +1,38 @@
 <?php
 
-use App\Controllers\SprintController;
-use App\Controllers\HistoriaController;
-use App\Controllers\InformeController;
+use App\Presentation\Repositories\SprintRepository;
+use App\Presentation\Repositories\HistoriaRepository;
+use App\Presentation\Repositories\InformeRepository;
+use Slim\App;
+use Slim\Routing\RouteCollectorProxy;
 
-return function ($app) {
-    
-    // Ruta de prueba
-    $app->get('/', function ($request, $response) {
-        $response->getBody()->write(json_encode([
-            'mensaje' => 'API Gestor de Historias de Usuario'
-        ]));
-        return $response->withHeader('Content-Type', 'application/json');
-    });
+return function (App $app) {
 
-    // Instanciar controllers
-    $sprintController = new SprintController();
-    $historiaController = new HistoriaController();
-    $informeController = new InformeController();
+    $app->get('/', [SprintRepository::class, 'list']);
 
     // ==========================================
-    // RUTAS DE SPRINTS
+    // SPRINTS
     // ==========================================
-    $app->get('/api/sprints', [$sprintController, 'index']);
-    $app->get('/api/sprints/{id}', [$sprintController, 'show']);
-    $app->post('/api/sprints', [$sprintController, 'store']);
-    $app->put('/api/sprints/{id}', [$sprintController, 'update']);
-    $app->delete('/api/sprints/{id}', [$sprintController, 'destroy']);
+    $app->get('/api/sprints', [SprintRepository::class, 'list']);
+    $app->get('/api/sprints/{id}', [SprintRepository::class, 'detail']);
+    $app->post('/api/sprints', [SprintRepository::class, 'create']);
+    $app->put('/api/sprints/{id}', [SprintRepository::class, 'update']);
+    $app->delete('/api/sprints/{id}', [SprintRepository::class, 'delete']);
 
     // ==========================================
-    // RUTAS DE HISTORIAS
+    // HISTORIAS
     // ==========================================
-    $app->get('/api/historias', [$historiaController, 'index']);
-    $app->get('/api/historias/{id}', [$historiaController, 'show']);
-    $app->post('/api/historias', [$historiaController, 'store']);
-    $app->put('/api/historias/{id}', [$historiaController, 'update']);
-    $app->delete('/api/historias/{id}', [$historiaController, 'destroy']);
-    $app->get('/api/sprints/{id}/historias', [$historiaController, 'porSprint']);
+    $app->get('/api/historias', [HistoriaRepository::class, 'list']);
+    $app->get('/api/historias/{id}', [HistoriaRepository::class, 'detail']);
+    $app->post('/api/historias', [HistoriaRepository::class, 'create']);
+    $app->put('/api/historias/{id}', [HistoriaRepository::class, 'update']);
+    $app->delete('/api/historias/{id}', [HistoriaRepository::class, 'delete']);
+    $app->get('/api/sprints/{id}/historias', [HistoriaRepository::class, 'porSprint']);
 
     // ==========================================
-    // RUTAS DE INFORMES
+    // INFORMES
     // ==========================================
-    $app->get('/api/informes/sprints', [$informeController, 'porSprint']);
-    $app->get('/api/informes/responsables', [$informeController, 'porResponsable']);
+    $app->get('/api/informes/sprints', [InformeRepository::class, 'porSprint']);
+    $app->get('/api/informes/responsables', [InformeRepository::class, 'porResponsable']);
+
 };

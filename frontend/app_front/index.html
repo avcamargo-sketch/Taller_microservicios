@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Historias de Usuario</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/modals.css">
+</head>
+<body>
+    <h1>📋 Gestor de Historias de Usuario</h1>
+    
+    <nav class="nav-tabs">
+        <button onclick="mostrarTab('sprints')" class="tab-btn active" id="btn-sprints">🏃 Sprints</button>
+        <button onclick="mostrarTab('historias')" class="tab-btn" id="btn-historias">📖 Historias</button>
+        <button onclick="mostrarTab('informes')" class="tab-btn" id="btn-informes">📊 Informes</button>
+    </nav>
+
+    <!-- TAB SPRINTS -->
+    <section id="tab-sprints" class="tab-content active">
+        <h2>Sprints</h2>
+        <table id="sprintsTb">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Historias</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="5">No hay datos...</td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="showForm('sprintForm')">+ Nuevo Sprint</button>
+    </section>
+
+    <!-- TAB HISTORIAS -->
+    <section id="tab-historias" class="tab-content">
+        <h2>Historias de Usuario</h2>
+        <div class="filtros">
+            <select id="filtro-sprint" onchange="filtrarHistorias()">
+                <option value="">Todos los sprints</option>
+            </select>
+            <select id="filtro-estado" onchange="filtrarHistorias()">
+                <option value="">Todos los estados</option>
+                <option value="nueva">Nueva</option>
+                <option value="activa">Activa</option>
+                <option value="finalizada">Finalizada</option>
+                <option value="impedimento">Impedimento</option>
+            </select>
+        </div>
+        <table id="historiasTb">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Responsable</th>
+                    <th>Sprint</th>
+                    <th>Puntos</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="6">No hay datos...</td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="showForm('historiaForm')">+ Nueva Historia</button>
+    </section>
+
+    <!-- TAB INFORMES -->
+    <section id="tab-informes" class="tab-content">
+        <h2>📊 Informes de Progreso</h2>
+        <div class="informes-grid">
+            <div>
+                <h3>Por Sprint</h3>
+                <table id="informeSprintsTb">
+                    <thead>
+                        <tr>
+                            <th>Sprint</th>
+                            <th>Total</th>
+                            <th>✅ Finalizadas</th>
+                            <th>⏳ Pendientes</th>
+                            <th>⚠️ Impedimentos</th>
+                            <th>Puntos</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div>
+                <h3>Por Responsable</h3>
+                <table id="informeRespTb">
+                    <thead>
+                        <tr>
+                            <th>Responsable</th>
+                            <th>Total</th>
+                            <th>✅ Finalizadas</th>
+                            <th>⏳ Pendientes</th>
+                            <th>⚠️ Impedimentos</th>
+                            <th>Puntos</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAL SPRINT -->
+    <div id="sprintForm" class="modal close">
+        <div class="modal_content">
+            <h3>Guardar Sprint</h3>
+            <form name="sprintForm">
+                <input type="hidden" name="id">
+                <div>
+                    <label>Nombre:</label>
+                    <input type="text" name="nombre" required>
+                </div>
+                <div>
+                    <label>Fecha Inicio:</label>
+                    <input type="date" name="fecha_inicio" required>
+                </div>
+                <div>
+                    <label>Fecha Fin:</label>
+                    <input type="date" name="fecha_fin" required>
+                </div>
+                <div>
+                    <button type="reset" onclick="hideForm('sprintForm')">Cancelar</button>
+                    <button type="submit">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL HISTORIA -->
+    <div id="historiaForm" class="modal close">
+        <div class="modal_content">
+            <h3>Guardar Historia</h3>
+            <form name="historiaForm">
+                <input type="hidden" name="id">
+                <div>
+                    <label>Título:</label>
+                    <input type="text" name="titulo" required>
+                </div>
+                <div>
+                    <label>Descripción:</label>
+                    <textarea name="descripcion" rows="2" required></textarea>
+                </div>
+                <div>
+                    <label>Responsable:</label>
+                    <input type="text" name="responsable" required>
+                </div>
+                <div>
+                    <label>Puntos:</label>
+                    <input type="number" name="puntos" min="1" required>
+                </div>
+                <div>
+                    <label>Sprint:</label>
+                    <select name="sprint_id" required>
+                        <option value="">Selecciona...</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Estado:</label>
+                    <select name="estado" required>
+                        <option value="nueva">Nueva</option>
+                        <option value="activa">Activa</option>
+                        <option value="finalizada">Finalizada</option>
+                        <option value="impedimento">Impedimento</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Fecha Creación:</label>
+                    <input type="date" name="fecha_creacion" required>
+                </div>
+                <div>
+                    <label>Fecha Finalización:</label>
+                    <input type="date" name="fecha_finalizacion">
+                </div>
+                <div>
+                    <button type="reset" onclick="hideForm('historiaForm')">Cancelar</button>
+                    <button type="submit">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL MENSAJE -->
+    <div id="msgModal" class="modal close">
+        <div class="modal_content">
+            <p id="msgText">Datos guardados!!!</p>
+            <button onclick="hideMsg()">Aceptar</button>
+        </div>
+    </div>
+
+    <script src="js/modal.js"></script>
+    <script src="js/sprints.js"></script>
+    <script src="js/historias.js"></script>
+    <script src="js/informes.js"></script>
+</body>
+</html>
